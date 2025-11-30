@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-11-29 19:39:53 by Eclipse SUMO netedit Version 1.24.0
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Vehicles, persons and containers (sorted by depart) -->
+    <flow id="f_0" begin="0.00" from="E17" to="E14.303" via="E14 E14.86 E14.207" end="3600.00" vehsPerHour="1800"/>
+    <flow id="f_1" begin="0.00" from="E0.224" to="E9" via="E0.224.42 E0 E0.116 E6" end="3600.00" vehsPerHour="1800"/>
+    <flow id="f_2" begin="0.00" color="cyan" from="E19" to="E11.64" via="E20.10 E2 -E1.6 -E1.6.66 -E1.6.165 E11" number="600" vehsPerHour="1800"/>
+    <flow id="f_3" begin="0.00" color="cyan" from="E12" to="E18.13" via="E12.10 E5.18 E5.133 E4 E18" number="600" vehsPerHour="1800"/>
+    <flow id="f_4" begin="0.00" color="128,0,0" from="E12" to="E9" via="E12.10 E6" number="300" vehsPerHour="1800"/>
+    <flow id="f_5" begin="0.00" color="128,0,0" from="E19" to="E9" via="E20.10 E2 -E1.6 -E1.6.66 -E1.6.165 E6" number="300" vehsPerHour="1800"/>
+    <flow id="f_6" begin="0.00" color="0,0,128" from="E19" to="E14.303" via="E20.10 E14 E14.86 E14.207" number="300" vehsPerHour="1800"/>
+    <flow id="f_7" begin="0.00" color="0,0,128" from="E12" to="E14.303" via="E12.10 E5.18 E31 E5.133 E4 E14 E14.86 E14.207" number="300" vehsPerHour="1800"/>
+</routes>

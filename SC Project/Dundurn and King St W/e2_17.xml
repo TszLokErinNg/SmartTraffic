@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-11-29 19:56:51 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Dundurn%20King%20St%20W.net.xml"/>
+        <route-files value="Dundurn%20King%20St%20W.rou.xml"/>
+        <additional-files value="Detectors.add.xml"/>
+    </input>
+
+</sumoConfiguration>
+-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e2_file.xsd">
+   <interval begin="0.00" end="300.00" id="W4_2" sampledSeconds="108.29" nVehEntered="29" nVehLef-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e2_file.xsd">
+   <interval begin="0.00" end="147.00" id="W4_2" sampledSeconds="34.06" nVehEntered="15" nVehLeft="15" nVehSeen="15" meanSpeed="3.92" meanTimeLoss="1.64" meanOccupancy="7.41" maxOccupancy="50.00" meanMaxJamLengthInVehicles="0.07" meanMaxJamLengthInMeters="0.26" maxJamLengthInVehicles="1" maxJamLengthInMeters="3.54" jamLengthInVehiclesSum="11" jamLengthInMetersSum="38.17" meanHaltingDuration="12.00" maxHaltingDuration="12.00" haltingDurationSum="12.00" meanIntervalHaltingDuration="12.00" maxIntervalHaltingDuration="12.00" intervalHaltingDurationSum="12.00" startedHalts="2.00" meanVehicleNumber="0.27" maxVehicleNumber="2" />
+</detector>
+Meters="0.27" maxJamLengthInVehicles="1" maxJamLengthInMeters="4.95" jamLengthInVehiclesSum="23" jamLengthInMetersSum="80.56" meanHaltingDuration="8.67" maxHaltingDuration="14.00" haltingDurationSum="26.00" meanIntervalHaltingDuration="8.67" maxIntervalHaltingDuration="14.00" intervalHaltingDurationSum="26.00" startedHalts="3.00" meanVehicleNumber="0.24" maxVehicleNumber="2" />

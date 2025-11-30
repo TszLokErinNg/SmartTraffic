@@ -1,0 +1,130 @@
+for episode in range(EPISODES):
+
+        # Reset episode-level metrics
+        cumulative_reward = 0.0
+        episode_delays = []
+        episode_avg_queues = []
+        episode_max_queues = []
+        episode_throughput = 0
+
+        # Reset SUMO for this episode
+        traci.close()
+        traci.start(SUMO_CMD)
+
+        last_switch_steps = [-MIN_GREEN_STEPS]*len(TLS_IDS)
+
+
+        for sim_step in range(STEPS_PER_EPISODE):
+            state = build_state_multi()
+
+        logits, probs = actor(state.reshape(1,-1), training=False)
+        probs = probs.numpy().reshape(len(TLS_IDS), max_phases)
+        actions = []
+        for i, tls_id in enumerate(TLS_IDS):
+            num_phases = get_num_phases(tls_id)
+            p = probs[i,:num_phases]
+            p /= np.sum(p)
+            actions.append(np.random.choice(num_phases, p=p))
+
+        last_switch_steps = apply_actions_multi(actions, last_switch_steps, sim_step)
+        traci.simulationStep()
+        next_state = build_state_multi()
+
+        # Reward: sum over intersections
+        max_qs = [max(read_queue_lengths(det)) for det in LANE_DETECTORS]
+        avg_qs = [np.mean(read_queue_lengths(det)) for det in LANE_DETECTORS]
+        avg_delays = [compute_average_delay()]*len(TLS_IDS)
+        throughput = get_arrived_count()
+        reward = sum(compute_reward(mq, aq, ad, throughput)
+                     for mq, aq, ad in zip(max_qs, avg_qs, avg_delays))
+        cumulative_reward += reward
+
+        episode_delays.append(np.mean(avg_delays))
+        episode_avg_queues.append(np.mean(avg_qs))
+        episode_max_queues.append(np.max(max_qs))
+        episode_throughput += throughput
+
+
+        # TensorFlow training (advantage, actor/critic loss) - same as original
+        # ... (reuse your previous gradient tape code)
+
+        # Convert to tensors
+        s_tf = tf.convert_to_tensor(state.reshape(1, -1), dtype=tf.float32)
+        ns_tf = tf.convert_to_tensor(next_state.reshape(1, -1), dtype=tf.float32)
+        actions_tf = tf.convert_to_tensor(actions, dtype=tf.int32)  # shape [num_TL]
+        r_tf = tf.convert_to_tensor([reward], dtype=tf.float32)     # shape [1]
+
+        with tf.GradientTape(persistent=True) as tape:
+            # Critic values
+            v_s = tf.squeeze(critic(s_tf, training=True))   # shape []
+            v_ns = tf.squeeze(critic(ns_tf, training=True)) # shape []
+
+            # Advantage
+            advantage = r_tf + GAMMA * v_ns - v_s           # shape []
+            advantage = tf.repeat(advantage, repeats=len(TLS_IDS))  # shape [num_TL]
+
+            # Actor forward pass
+            logits, _ = actor(s_tf, training=True)         # shape [1, num_TL*max_phases]
+            logits_reshaped = tf.reshape(logits, (len(TLS_IDS), -1))  # [num_TL, max_phases]
+            probs = tf.nn.softmax(logits_reshaped, axis=1)
+            log_probs = tf.math.log(tf.clip_by_value(probs, 1e-8, 1.0))
+
+            # Gather log-probabilities of the taken actions
+            indices = tf.stack([tf.range(len(TLS_IDS)), actions_tf], axis=1)  # [num_TL, 2]
+            logp_taken = tf.gather_nd(log_probs, indices)                     # [num_TL]
+
+            # Actor loss
+            policy_loss = -tf.reduce_mean(logp_taken * advantage)
+
+            # Entropy bonus
+            entropy = -tf.reduce_mean(tf.reduce_sum(probs * log_probs, axis=1))
+            actor_loss = policy_loss - ENTROPY_COEF * entropy
+
+            # Critic loss: MSE of advantage
+            critic_loss = VALUE_LOSS_COEF * tf.reduce_mean(tf.square(advantage))
+
+            total_loss = actor_loss + critic_loss
+
+        # Compute gradients and apply
+        actor_grads = tape.gradient(actor_loss, actor.trainable_variables)
+        critic_grads = tape.gradient(critic_loss, critic.trainable_variables)
+        actor_optimizer.apply_gradients(zip(actor_grads, actor.trainable_variables))
+        critic_optimizer.apply_gradients(zip(critic_grads, critic.trainable_variables))
+        del tape
+
+        # Record metrics
+        steps.append(sim_step)
+        avg_delay_hist.append(avg_delays)
+        avg_queue_hist.append(avg_qs)
+        max_queue_hist.append(max_qs)
+        throughput_hist.append(throughput)
+        cumulative_reward_hist.append(cumulative_reward)
+        
+        mean_delay = np.mean(episode_delays)
+        mean_avg_queue = np.mean(episode_avg_queues)
+        max_queue_ep = np.max(episode_max_queues)
+
+        csv_writer.writerow([
+            episode,
+            cumulative_reward,
+            mean_delay,
+            mean_avg_queue,
+            max_queue_ep,
+            episode_throughput
+        ])
+        print(f"Episode {episode} | Reward={cumulative_reward:.2f} | Delay={mean_delay:.2f}")
+
+        if sim_step % PRINT_EVERY == 0:
+            print(f"Step {sim_step} | reward {reward:.2f} | cum_reward {cumulative_reward:.1f}")
+            if PRINT_DELAY>0: time.sleep(PRINT_DELAY)
+
+
+
+
+
+# Lanes to read
+    #LANES = [
+       # "E0.116_0", "E0.116_1", "E0.116_2", "E0.116_3", "E0.116_4", # Eastbound Dundurn St
+       # "-E1.6.165_0", "-E1.6.165_1", "-E1.6.165_2", # Westbound Dundurn St
+        #"E12.10_0", "E12.10_1" # Southbound King St W
+    #]

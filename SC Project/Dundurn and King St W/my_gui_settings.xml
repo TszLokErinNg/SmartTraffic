@@ -1,0 +1,11 @@
+<viewsettings>
+    <background>
+        <!-- Path to your background image -->
+        <image file="Dundurn and King st w.tif"
+               x="-1000"
+               y="-1000"
+               width="597"
+               height="446"
+               rotation="0" />
+    </background>
+</viewsettings>
