@@ -10,7 +10,7 @@ Urban intersections using fixed-time traffic signals often cause excessive vehic
 during peak hours. This project investigates how Reinforcement Learning (RL) algorithms
 can dynamically optimize traffic signal timing to reduce vehicle delay, queue length, and
 improve throughput — simulated using real Hamilton, Ontario intersections.
-[Watch the demo here!(SmartTrafficVideoThumbmail.png)](https://youtu.be/9O_BXXEqsDM)
+[![Watch the demo here!](SmartTrafficVideoThumbmail.png)](https://youtu.be/9O_BXXEqsDM)
 
 ---
 
